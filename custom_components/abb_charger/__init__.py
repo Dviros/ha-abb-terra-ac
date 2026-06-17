@@ -5,7 +5,7 @@ from .const import CONF_USERNAME, CONF_PASSWORD, CONF_DEVICE_ID, CONF_DEVICE_NUM
 from .api import AbbChargeDotApi
 from .coordinator import AbbCoordinator
 
-PLATFORMS = [Platform.SWITCH, Platform.SENSOR, Platform.BINARY_SENSOR]
+PLATFORMS = [Platform.SWITCH, Platform.SENSOR, Platform.BINARY_SENSOR, Platform.UPDATE]
 
 
 async def async_setup_entry(hass, entry):

@@ -13,7 +13,12 @@ DESCRIPTIONS = [
     ("duration", "last_session", "duration", "Last session duration", UnitOfTime.SECONDS,
      SensorDeviceClass.DURATION, None, "num", False),
     ("end", "last_session", "stopTime", "Last session end", None, SensorDeviceClass.TIMESTAMP, None, "ts", False),
+    ("avg_price", "price", "averagePrice", "Tariff average price", None, None, None, "num", False),
     ("status", "device", "status", "Status code", None, None, None, None, True),
+    ("rated_current", "device", "ratedCurrent", "Rated current", "A", None, None, "num", True),
+    ("max_power", "device", "elecPower", "Rated power", "W", None, None, "num", True),
+    ("firmware", "device", "softVersion", "Firmware", None, None, None, None, True),
+    ("open_flag", "price", "open", "Public charging flag", None, None, None, "num", True),
 ]
 
 

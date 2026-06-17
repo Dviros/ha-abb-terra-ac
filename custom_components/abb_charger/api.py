@@ -110,6 +110,20 @@ class AbbChargeDotApi:
             return items[0]
         return None
 
+    async def get_price(self, device_id: int):
+        try:
+            return await self._get(f"/api/v2/devices/{device_id}/price")
+        except Exception:
+            return None
+
+    async def get_upgrade(self, device_number: str, soft_version: str, hardware_version: str):
+        try:
+            return await self._get(
+                f"/api/v2/devices/upgrade-rules/upgrade?currentVersion=v{soft_version}"
+                f"&deviceNumber={device_number}&hardwareVersion={hardware_version}")
+        except Exception:
+            return None
+
     async def command(self, device_number: str, action: str) -> dict:
         """start|stop|status — returns {ok, result_code, result, raw}."""
         cmd, body = ACTION_CMD[action]

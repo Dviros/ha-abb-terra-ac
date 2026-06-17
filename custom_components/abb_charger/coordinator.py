@@ -21,6 +21,11 @@ class AbbCoordinator(DataUpdateCoordinator):
         try:
             device = await self.api.get_device(self.device_id)
             last = await self.api.get_last_session(self.device_id)
-            return {"device": device, "last_session": last}
+            price = await self.api.get_price(self.device_id)
+            upgrade = None
+            if isinstance(device, dict) and device.get("softVersion") and device.get("hardwareVersion"):
+                upgrade = await self.api.get_upgrade(
+                    self.device_number, device["softVersion"], device["hardwareVersion"])
+            return {"device": device, "last_session": last, "price": price, "upgrade": upgrade}
         except Exception as err:  # noqa
             raise UpdateFailed(str(err)) from err
