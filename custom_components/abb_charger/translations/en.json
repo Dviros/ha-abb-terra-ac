@@ -1,0 +1,22 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "ABB Terra AC (ChargerSync)",
+        "description": "Sign in with your ChargerSync (ABB e-mobility) account. Tip: use a SEPARATE ABB account shared to the charger so it doesn't fight your phone app's session.",
+        "data": {
+          "username": "Email",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid email or password",
+      "cannot_connect": "Could not reach ChargerSync",
+      "no_devices": "No chargers found on this account"
+    },
+    "abort": {
+      "already_configured": "This charger is already configured"
+    }
+  }
+}
