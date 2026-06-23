@@ -1,5 +1,6 @@
 from homeassistant.components.sensor import SensorEntity, SensorDeviceClass, SensorStateClass
-from homeassistant.const import UnitOfEnergy, UnitOfTime
+from homeassistant.const import (UnitOfEnergy, UnitOfTime, UnitOfPower,
+                                 UnitOfElectricCurrent, UnitOfElectricPotential)
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.util import dt as dt_util
 
@@ -7,7 +8,7 @@ from .entity import AbbEntity
 
 # key, section, field, name, unit, device_class, state_class, kind(None|'ts'|'num'), diagnostic
 DESCRIPTIONS = [
-    ("energy", "last_session", "energy", "Last session energy", UnitOfEnergy.KILO_WATT_HOUR,
+    ("energy", "last_session", "energy", "Last session energy", UnitOfEnergy.WATT_HOUR,
      None, SensorStateClass.MEASUREMENT, "num", False),
     ("cost", "last_session", "cost", "Last session cost", None, None, SensorStateClass.MEASUREMENT, "num", False),
     ("duration", "last_session", "duration", "Last session duration", UnitOfTime.SECONDS,
@@ -19,6 +20,19 @@ DESCRIPTIONS = [
     ("max_power", "device", "elecPower", "Rated power", "W", None, None, "num", True),
     ("firmware", "device", "softVersion", "Firmware", None, None, None, None, True),
     ("open_flag", "price", "open", "Public charging flag", None, None, None, "num", True),
+    # --- live charger telemetry (ports[0].detail, refreshed each poll) ---
+    ("power", "port", "power", "Power", UnitOfPower.WATT,
+     SensorDeviceClass.POWER, SensorStateClass.MEASUREMENT, "num", False),
+    ("current", "port", "current", "Current", UnitOfElectricCurrent.AMPERE,
+     SensorDeviceClass.CURRENT, SensorStateClass.MEASUREMENT, "num", False),
+    ("voltage", "port", "voltage", "Voltage", UnitOfElectricPotential.VOLT,
+     SensorDeviceClass.VOLTAGE, SensorStateClass.MEASUREMENT, "num", True),
+    ("session_energy_live", "port", "elecQuantity", "Session energy (live)", UnitOfEnergy.WATT_HOUR,
+     None, SensorStateClass.MEASUREMENT, "num", False),
+    ("session_duration_live", "port", "duration", "Session duration (live)", UnitOfTime.SECONDS,
+     SensorDeviceClass.DURATION, None, "num", True),
+    ("connector_status", "port", "connectorStatus", "Connector status", None, None, None, None, True),
+    ("fault", "port", "faultType", "Fault", None, None, None, None, True),
 ]
 
 

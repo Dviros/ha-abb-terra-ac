@@ -1,4 +1,5 @@
 from datetime import timedelta
+import json
 import logging
 
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -26,6 +27,26 @@ class AbbCoordinator(DataUpdateCoordinator):
             if isinstance(device, dict) and device.get("softVersion") and device.get("hardwareVersion"):
                 upgrade = await self.api.get_upgrade(
                     self.device_number, device["softVersion"], device["hardwareVersion"])
-            return {"device": device, "last_session": last, "price": price, "upgrade": upgrade}
+            return {"device": device, "last_session": last, "price": price,
+                    "upgrade": upgrade, "port": _parse_port(device)}
         except Exception as err:  # noqa
             raise UpdateFailed(str(err)) from err
+
+
+def _parse_port(device) -> dict:
+    """Flatten ports[0] + its live `detail` JSON string into one dict."""
+    if not isinstance(device, dict):
+        return {}
+    ports = device.get("ports")
+    if not (isinstance(ports, list) and ports and isinstance(ports[0], dict)):
+        return {}
+    p0 = ports[0]
+    port = {k: v for k, v in p0.items() if k != "detail"}
+    detail = p0.get("detail")
+    if isinstance(detail, str) and detail:
+        try:
+            port.update(json.loads(detail))
+        except ValueError:
+            pass
+    port["connectorStatus"] = p0.get("status")  # connector status (not device.status)
+    return port

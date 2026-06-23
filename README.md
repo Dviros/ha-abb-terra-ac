@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="https://github.com/hacs/integration"><img src="https://img.shields.io/badge/HACS-Custom-41BDF5.svg" alt="HACS Custom"></a>
-  <img src="https://img.shields.io/badge/version-0.1.0-green.svg" alt="version">
+  <img src="https://img.shields.io/badge/version-0.4.0-green.svg" alt="version">
   <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="license">
   <img src="https://img.shields.io/badge/Home%20Assistant-2024.6%2B-41BDF5.svg" alt="HA">
 </p>
@@ -34,13 +34,23 @@ cloud** the app uses, so it works from anywhere the charger has internet.
 
 | Entity | Type | Description |
 |--------|------|-------------|
-| `switch.*_charging` | Switch | **Start / stop** a charging session |
+| `switch.*_charging` | Switch | **Start / stop** a charging session (state reflects real charging) |
+| `binary_sensor.*_connected` | Binary sensor | Cable connected at the station (connector occupied) |
+| `binary_sensor.*_charging` | Binary sensor | Actively delivering power |
 | `binary_sensor.*_online` | Binary sensor | Charger online (connectivity) |
-| `sensor.*_last_session_energy` | Sensor | Energy delivered in the last session (kWh) |
+| `sensor.*_power` | Sensor | Live charging power (W) |
+| `sensor.*_current` | Sensor | Live charging current (A) |
+| `sensor.*_voltage` | Sensor | Live voltage (V, diagnostic) |
+| `sensor.*_session_energy_live` | Sensor | Energy delivered so far this session (Wh) |
+| `sensor.*_session_duration_live` | Sensor | Elapsed time this session (diagnostic) |
+| `sensor.*_last_session_energy` | Sensor | Energy delivered in the last session (Wh) |
 | `sensor.*_last_session_cost` | Sensor | Cost of the last session |
 | `sensor.*_last_session_duration` | Sensor | Duration of the last session |
 | `sensor.*_last_session_end` | Sensor | When the last session ended (timestamp) |
-| `sensor.*_status_code` | Sensor | Raw charger status code (diagnostic) |
+| `sensor.*_tariff_average_price` | Sensor | Average tariff price |
+| `sensor.*_connector_status` / `*_status_code` / `*_fault` | Sensor | Raw status / fault codes (diagnostic) |
+| `sensor.*_rated_current` / `*_rated_power` / `*_firmware` | Sensor | Charger specs (diagnostic) |
+| `update.*_firmware` | Update | Firmware update available |
 
 All grouped under a single **device** (`ABB Terra AC`).
 
@@ -67,14 +77,15 @@ restart Home Assistant.
 
 ## Notes & limitations
 
-- **Cloud polling** (default 120 s) for status; commands are real-time over the cloud WebSocket.
-- `status_code` is exposed raw while the enum is being mapped.
+- **Cloud polling** (default 60 s) for status/telemetry; start/stop commands are real-time over the cloud WebSocket.
+- Live power/current/voltage and connector state come from the charger's port telemetry (`ports[].detail`).
+- Energy fields are reported in **Wh**.
 - Starting a session only delivers power if a vehicle is connected and requesting charge.
 
 ## Roadmap
 
-- [ ] Live **charging / plugged / power** state (via the real-time status command)
-- [ ] **Charging current** limit (number)
+- [x] Live **charging / connected / power** state (port telemetry)
+- [ ] **Charging current** limit / load-balancing (number)
 - [ ] **Free-vending**, **charge mode**, and **scheduled charging** controls
 - [ ] Energy dashboard (total / cost) statistics
 
