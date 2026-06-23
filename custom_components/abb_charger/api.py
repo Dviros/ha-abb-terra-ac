@@ -6,7 +6,8 @@ import aiohttp
 from yarl import URL
 
 from .const import (REST, WS_HOST, WS_PORT, CLIENT_ID, CLIENT_SECRET, UA,
-                    CMD_START, CMD_STOP, CMD_STATUS, CMD_IDENTITY, RESULT_CODES)
+                    CMD_START, CMD_STOP, CMD_STATUS, CMD_IDENTITY, CMD_POWER_CONTROL,
+                    MIN_CHARGE_CURRENT, RESULT_CODES)
 
 _LOGGER = logging.getLogger(__name__)
 ACTION_CMD = {"start": (CMD_START, b"\x00\x00"), "stop": (CMD_STOP, b"\x00"), "status": (CMD_STATUS, b"\x00")}
@@ -127,6 +128,15 @@ class AbbChargeDotApi:
     async def command(self, device_number: str, action: str) -> dict:
         """start|stop|status — returns {ok, result_code, result, raw}."""
         cmd, body = ACTION_CMD[action]
+        return await self._run(device_number, cmd, body)
+
+    async def set_output_current(self, device_number: str, amps: int) -> dict:
+        """Set the charging current limit (load balancing). WS CMD 0xC0, body=[port=0, amps]."""
+        amps = max(MIN_CHARGE_CURRENT, min(80, int(amps)))
+        return await self._run(device_number, CMD_POWER_CONTROL, bytes([0x00, amps & 0xFF]))
+
+    async def _run(self, device_number: str, cmd: int, body: bytes) -> dict:
+        """Full WS control flow: login -> identity-auth -> token -> framed command."""
         last = {"ok": False, "error": "unknown"}
         for attempt in (1, 2):
             try:

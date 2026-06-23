@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="https://github.com/hacs/integration"><img src="https://img.shields.io/badge/HACS-Custom-41BDF5.svg" alt="HACS Custom"></a>
-  <img src="https://img.shields.io/badge/version-0.4.0-green.svg" alt="version">
+  <img src="https://img.shields.io/badge/version-0.5.0-green.svg" alt="version">
   <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="license">
   <img src="https://img.shields.io/badge/Home%20Assistant-2024.6%2B-41BDF5.svg" alt="HA">
 </p>
@@ -35,6 +35,7 @@ cloud** the app uses, so it works from anywhere the charger has internet.
 | Entity | Type | Description |
 |--------|------|-------------|
 | `switch.*_charging` | Switch | **Start / stop** a charging session (state reflects real charging) |
+| `number.*_charging_current_limit` | Number | **Charging current** limit / load balancing (6 A – rated, set over WS) |
 | `binary_sensor.*_connected` | Binary sensor | Cable connected at the station (connector occupied) |
 | `binary_sensor.*_charging` | Binary sensor | Actively delivering power |
 | `binary_sensor.*_online` | Binary sensor | Charger online (connectivity) |
@@ -85,7 +86,7 @@ restart Home Assistant.
 ## Roadmap
 
 - [x] Live **charging / connected / power** state (port telemetry)
-- [ ] **Charging current** limit / load-balancing (number)
+- [x] **Charging current** limit / load-balancing (number, WS `PowerControl` 0xC0)
 - [ ] **Free-vending**, **charge mode**, and **scheduled charging** controls
 - [ ] Energy dashboard (total / cost) statistics
 

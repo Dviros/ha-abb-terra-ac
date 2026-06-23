@@ -12,6 +12,9 @@ CMD_START = 0xB4
 CMD_STOP = 0xB6
 CMD_STATUS = 0xB5
 CMD_IDENTITY = 0xFE
+CMD_POWER_CONTROL = 0xC0  # set charging current / load balancing; body = [port(0), outputCurrent]
+
+MIN_CHARGE_CURRENT = 6  # IEC 61851 AC minimum
 
 RESULT_CODES = {
     0: "success", 17: "parse_error", 18: "no_permission", 19: "reject",
