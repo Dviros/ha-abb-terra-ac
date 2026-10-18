@@ -8,6 +8,13 @@
           "username": "Email",
           "password": "Password"
         }
+      },
+      "device": {
+        "title": "Choose a charger",
+        "description": "This account has several chargers. Pick one; add the integration again for each other charger.",
+        "data": {
+          "device_id": "Charger"
+        }
       }
     },
     "error": {
@@ -16,7 +23,18 @@
       "no_devices": "No chargers found on this account"
     },
     "abort": {
-      "already_configured": "This charger is already configured"
+      "already_configured": "All chargers on this account are already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Charging current",
+        "description": "Highest current the charging current limit can be set to (charger rating: {rated} A). Lower it if your supply or main breaker can't carry the full rated current.",
+        "data": {
+          "max_current": "Maximum charging current (A)"
+        }
+      }
     }
   }
 }

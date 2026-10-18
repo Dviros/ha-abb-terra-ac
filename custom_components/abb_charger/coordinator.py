@@ -18,6 +18,14 @@ class AbbCoordinator(DataUpdateCoordinator):
         self.device_id = device_id
         self.device_number = device_number
 
+    @property
+    def rated_current(self) -> int:
+        dev = (self.data or {}).get("device") or {}
+        try:
+            return int(float(dev.get("ratedCurrent") or 16))
+        except (TypeError, ValueError):
+            return 16
+
     async def _async_update_data(self):
         try:
             device = await self.api.get_device(self.device_id)

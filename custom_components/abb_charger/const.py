@@ -28,3 +28,4 @@ CONF_DEVICE_ID = "device_id"
 CONF_DEVICE_NUMBER = "device_number"
 
 SCAN_INTERVAL_SECONDS = 60
+CONF_MAX_CURRENT = "max_current"  # options: cap for the current-limit entity (protect the supply)

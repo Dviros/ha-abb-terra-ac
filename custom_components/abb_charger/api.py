@@ -1,6 +1,6 @@
 """Async ChargeDot/ABB Terra AC cloud client (REST + plaintext WebSocket control)."""
 from __future__ import annotations
-import json, time, logging
+import asyncio, json, time, logging
 from datetime import datetime, timedelta
 import aiohttp
 from yarl import URL
@@ -58,10 +58,16 @@ class AbbChargeDotApi:
         self._pw = password
         self._token = None
         self._token_exp = 0.0
+        self._lock = asyncio.Lock()  # one login at a time when several chargers share this client
 
     async def _oauth(self, force=False) -> str:
-        if not force and self._token and self._token_exp > time.time() + 60:
-            return self._token
+        stale = self._token
+        async with self._lock:
+            if self._token and self._token_exp > time.time() + 60 and not (force and self._token == stale):
+                return self._token
+            return await self._login()
+
+    async def _login(self) -> str:
         data = {"grant_type": "password", "client_id": CLIENT_ID, "client_secret": CLIENT_SECRET,
                 "username": self._user, "password": self._pw}
         async with self._s.post(f"{REST}/api/oauth/token", data=data,
