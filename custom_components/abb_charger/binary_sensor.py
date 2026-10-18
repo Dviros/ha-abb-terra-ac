@@ -2,8 +2,10 @@ from homeassistant.components.binary_sensor import BinarySensorEntity, BinarySen
 
 from .entity import AbbEntity
 
-# Connector status codes that mean "nothing plugged in / available".
+# Connector status codes (ports[].status), observed on firmware 1.8.37 (issue #1):
+# 2 available/unplugged, 3 plugged/not started, 4 suspended, 6 charging, 8 session ended/plugged.
 IDLE_CONNECTOR_CODES = {2}
+CHARGING_CONNECTOR_CODES = {6}
 
 
 def _num(v):
@@ -13,7 +15,19 @@ def _num(v):
         return 0.0
 
 
+def _status(port: dict):
+    try:
+        return int(port.get("connectorStatus"))
+    except (TypeError, ValueError):
+        return None
+
+
 def _is_charging(port: dict) -> bool:
+    # Cloud keeps detail.power/current frozen after a session stops until unplug,
+    # so the connector status is authoritative when present.
+    status = _status(port)
+    if status is not None:
+        return status in CHARGING_CONNECTOR_CODES
     if _num(port.get("power")) > 0:
         return True
     finished = port.get("finishedAt") or ""
@@ -27,8 +41,8 @@ def _is_connected(port: dict) -> bool:
         return True
     if _num(port.get("occupyUserId")) > 0:
         return True
-    status = port.get("connectorStatus")
-    return status is not None and int(status) not in IDLE_CONNECTOR_CODES
+    status = _status(port)
+    return status is not None and status not in IDLE_CONNECTOR_CODES
 
 
 async def async_setup_entry(hass, entry, async_add_entities):

@@ -11,9 +11,9 @@
 
 <p align="center">
   <a href="https://github.com/hacs/integration"><img src="https://img.shields.io/badge/HACS-Custom-41BDF5.svg" alt="HACS Custom"></a>
-  <img src="https://img.shields.io/badge/version-0.5.0-green.svg" alt="version">
+  <img src="https://img.shields.io/badge/version-0.6.0-green.svg" alt="version">
   <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="license">
-  <img src="https://img.shields.io/badge/Home%20Assistant-2024.6%2B-41BDF5.svg" alt="HA">
+  <img src="https://img.shields.io/badge/Home%20Assistant-2024.11%2B-41BDF5.svg" alt="HA">
 </p>
 
 ---
@@ -35,13 +35,13 @@ cloud** the app uses, so it works from anywhere the charger has internet.
 | Entity | Type | Description |
 |--------|------|-------------|
 | `switch.*_charging` | Switch | **Start / stop** a charging session (state reflects real charging) |
-| `number.*_charging_current_limit` | Number | **Charging current** limit / load balancing (6 A – rated, set over WS) |
+| `number.*_charging_current_limit` | Number | **Charging current** limit / load balancing (6 A – configured max, set over WS; shows the last value sent, restored across restarts) |
 | `binary_sensor.*_connected` | Binary sensor | Cable connected at the station (connector occupied) |
-| `binary_sensor.*_charging` | Binary sensor | Actively delivering power |
+| `binary_sensor.*_charging` | Binary sensor | Charging (connector status 6) |
 | `binary_sensor.*_online` | Binary sensor | Charger online (connectivity) |
 | `sensor.*_power` | Sensor | Live charging power (W) |
-| `sensor.*_current` | Sensor | Live charging current (A) |
-| `sensor.*_voltage` | Sensor | Live voltage (V, diagnostic) |
+| `sensor.*_current` | Sensor | Live charging current per phase (A, 0 when not charging) |
+| `sensor.*_voltage` | Sensor | Live voltage per phase (V, diagnostic) |
 | `sensor.*_session_energy_live` | Sensor | Energy delivered so far this session (Wh) |
 | `sensor.*_session_duration_live` | Sensor | Elapsed time this session (diagnostic) |
 | `sensor.*_last_session_energy` | Sensor | Energy delivered in the last session (Wh) |
@@ -53,7 +53,7 @@ cloud** the app uses, so it works from anywhere the charger has internet.
 | `sensor.*_rated_current` / `*_rated_power` / `*_firmware` | Sensor | Charger specs (diagnostic) |
 | `update.*_firmware` | Update | Firmware update available |
 
-All grouped under a single **device** (`ABB Terra AC`).
+Each charger is its own **device** (`ABB Terra AC <serial>`).
 
 ## Installation
 
@@ -69,7 +69,8 @@ restart Home Assistant.
 ## Configuration
 
 1. **Settings → Devices & Services → Add Integration → "ABB Terra AC (ChargerSync)"**.
-2. Enter your **ChargerSync account email & password**. The charger is auto-discovered.
+2. Enter your **ChargerSync account email & password**. If the account has more than one charger, pick one; add the integration again for each other charger (they share one login).
+3. Optional: **Configure** the entry to set a **maximum charging current** below the charger rating, if your supply or main breaker can't carry the full rated current.
 
 > [!TIP]
 > ChargeDot allows **one active session per account**, so Home Assistant and the phone app will occasionally

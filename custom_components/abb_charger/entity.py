@@ -11,7 +11,7 @@ class AbbEntity(CoordinatorEntity):
         dev = (self.coordinator.data or {}).get("device") or {}
         return DeviceInfo(
             identifiers={(DOMAIN, self.coordinator.device_number)},
-            name="ABB Terra AC",
+            name=f"ABB Terra AC {self.coordinator.device_number}",
             manufacturer="ABB",
             model=dev.get("model"),
             sw_version=dev.get("softVersion"),
